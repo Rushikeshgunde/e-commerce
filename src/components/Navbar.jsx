@@ -1,5 +1,9 @@
 import "../style/Navbar.css";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { CartContext } from "../context/Cartcontext";
+import { WishlistContext } from "../context/WishlistContext";
+import { ThemeContext } from "../context/ThemeContext";
 
 function Navbar({
   search,
@@ -8,10 +12,13 @@ function Navbar({
   setCategory,
   sortOrder,
   setsortOrder,
-  cartCount,
+  // cartCount,
 }) {
+  const { cartItems } = useContext(CartContext);
+  const { wishlist } = useContext(WishlistContext);
+  const { darkMode, setDarkMode } = useContext(ThemeContext);
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   return (
     <nav className="navbar">
       <h2>ShopEasy</h2>
@@ -31,13 +38,27 @@ function Navbar({
         <option value="jewelery">Jewellery</option>
       </select>
 
-      <select value={sortOrder} onChange={(e) => setsortOrder(e.target.value)}>
+      {/* <select value={sortOrder} onChange={(e) => setsortOrder(e.target.value)}>
         <option value="">Sort Price</option>
         <option value="low-high">Low To High</option>
         <option value="high-low">High To Low</option>
-      </select>
+      </select> */}
 
-      <h3 className="cart" onClick={()=>navigate("/cart")}>🛒 Cart ({cartCount})</h3>
+      <button onClick={() => setDarkMode(!darkMode)}>
+        {darkMode ? "☀️" : "🌙"}
+      </button>
+
+
+      <div className="wishlist-icon" onClick={() => navigate("/wishlist")}>
+        ❤️
+        {wishlist.length > 0 && (
+          <span className="badge">{wishlist.length}</span>
+        )}
+      </div>
+
+      <h3 className="cart" onClick={() => navigate("/cart")}>
+        🛒 Cart ({cartItems.length})
+      </h3>
     </nav>
   );
 }

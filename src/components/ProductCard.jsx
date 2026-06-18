@@ -1,60 +1,77 @@
 import { useNavigate } from "react-router-dom";
-import "../style/Productcard.css"
+import { useContext } from "react";
+import { CartContext } from "../context/Cartcontext";
+import { WishlistContext } from "../context/WishlistContext";
+import "../style/Productcard.css";
+import { toast } from "react-toastify";
 
-function ProductCard({ product,setCartCount }) {
-    const navigate = useNavigate();
+function ProductCard({ product }) {
+  const navigate = useNavigate();
+  const { wishlist, toggleWishlist } = useContext(WishlistContext);
 
-    const hnadleDetails=()=>{
-        navigate(`/product/${product.id}`);
-    };
+  const isWished = wishlist.some(
+    (item) => (item.id || item._id) === (product.id || product._id),
+  );
 
-   
+  const handleWishlist = () => {
+    const alreadyWished = wishlist.some((item) => item.id === product.id);
+    toggleWishlist(product);
 
-  const handleCart = () => {
-
-    const cart =
-      JSON.parse(
-        localStorage.getItem("cart")
-      ) || [];
-
-    const existingItem =
-      cart.find(
-        (item) =>
-          item.id === product.id
-      );
-
-    if (existingItem) {
-      alert("Already Added");
-      return;
-    }else{
-        alert("Product added to cart successfully!")
-    }
-
-    cart.push(product);
-
-    localStorage.setItem(
-      "cart",
-      JSON.stringify(cart)
+    toast.success(
+      alreadyWished ? "Removed from wishlist 💔" : "Added to wishlist ❤️",
     );
-
-    setCartCount(cart.length);
   };
 
+  const handleDetails = () => {
+    navigate(`/product/${product.id}`);
+  };
 
+  const { cartItems, setCartItems } = useContext(CartContext);
 
+  const handleCart = () => {
+    const cart = [...cartItems];
 
+    const existingItem = cart.find((item) => item.id === product.id);
+
+    if (existingItem) {
+      toast.warning("Product already exists in cart!");
+      return;
+    }
+    cart.push({ ...product, quantity: 1 });
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    setCartItems(cart);
+
+    toast.success("🛒Product added to cart!");
+  };
 
   return (
     <div className="card">
-      <img src={product.image} alt={product.title} onClick={hnadleDetails} />
+      <div className="wishlist-area">
+        <button
+          className={`heart-btn ${isWished ? "active" : ""}`}
+          onClick={handleWishlist}
+        >
+          {isWished ? "❤️" : "🤍"}
+        </button>
+      </div>
 
-      <h3 onClick={hnadleDetails}>{product.title}</h3>
-      <p>₹ {product.price}</p>
+      <img src={product.image} alt={product.title} onClick={handleDetails} />
 
-      <button className="cart-btn" onClick={handleCart}>Add to cart</button>
+      <h3 className="product-title" onClick={handleDetails}>{product.title}</h3>
+
+      {/* <p className="category">{product.category}</p> */}
+
+      <div className="rating">⭐ {product.rating?.rate}</div>
+
+      <p className="price">₹ {product.price}</p>
+
+      <button className="cart-btn" onClick={handleCart}>
+        Add To Cart
+      </button>
     </div>
   );
 }
-
 
 export default ProductCard;

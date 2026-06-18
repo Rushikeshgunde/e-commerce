@@ -7,7 +7,12 @@ const Cart = () => {
   useEffect(() => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-    setCartItems(cart);
+    const updatedCart = cart.map((item) => ({
+      ...item,
+      quantity: item.quantity || 1,
+    }));
+    setCartItems(updatedCart);
+    
   }, []);
 
   // Remove Product
@@ -18,9 +23,37 @@ const Cart = () => {
 
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
+  // --------------------------------------------------------------------------------
+  const increaseQuantity = (id) => {
+    const updatedCart = cartItems.map((item) =>
+      item.id === id
+        ? {
+            ...item,
+            quantity: item.quantity + 1,
+          }
+        : item,
+    );
+    setCartItems(updatedCart);
+
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+  };
+
+  const decreaseQuantity = (id) => {
+    const updatedCart = cartItems.map((item) =>
+      item.id === id
+        ? {
+            ...item,
+            quantity: item.quantity > 1 ? item.quantity - 1 : 1,
+          }
+        : item,
+    );
+    setCartItems(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+  };
+  // --------------------------------------------------------------------------------
 
   // Total Price
-  const totalPrice = cartItems.reduce((total, item) => total + item.price, 0);
+  const totalPrice = cartItems.reduce((total, item) => total + item.price*item.quantity, 0);
 
   return (
     <div className="cart-container">
@@ -41,6 +74,14 @@ const Cart = () => {
                 <h3>{item.title}</h3>
 
                 <p className="cart-price">₹ {item.price}</p>
+                <div className="quantity-box">
+                  <button onClick={() => decreaseQuantity(item.id)}>-</button>
+
+                  <span>{item.quantity}</span>
+
+                  <button onClick={() => increaseQuantity(item.id)}>+</button>
+                </div>
+                <p>Subtotal: ₹ {(item.price * item.quantity).toFixed(2)}</p>
               </div>
 
               <button
