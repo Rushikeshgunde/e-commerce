@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "../style/cart.css";
+import Navbar from "../components/Navbar";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -56,6 +57,10 @@ const Cart = () => {
   const totalPrice = cartItems.reduce((total, item) => total + item.price*item.quantity, 0);
 
   return (
+<>
+    <Navbar/>
+
+
     <div className="cart-container">
       <h1 className="cart-title">🛒 My Cart</h1>
 
@@ -101,6 +106,7 @@ const Cart = () => {
         </>
       )}
     </div>
+    </>
   );
 };
 

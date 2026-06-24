@@ -1,64 +1,161 @@
 .sidebar {
-  width: 250px;
+  width: 220px;
+  flex-shrink: 0;
   background: white;
-  padding: 20px;
   border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  height: 100%;
+  overflow-y: auto;
+}
 
-  box-shadow:
-  0 4px 12px rgba(0,0,0,0.08);
+/* hide scrollbar but keep scroll */
+.sidebar::-webkit-scrollbar {
+  width: 3px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 3px;
 }
 
 .sidebar h3 {
-  margin-bottom: 15px;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #111827;
 }
 
-.sidebar ul {
-  list-style: none;
-}
-
-.sidebar li {
-  padding: 10px 0;
-  cursor: pointer;
-}
-
-.sidebar li:hover {
-  color: #2563eb;
-}
-
-.sidebar {
-  width: 260px;
-  background: white;
-  border-radius: 15px;
-  padding: 20px;
-
-  box-shadow:
-    0 4px 15px rgba(0, 0, 0, 0.08);
-}
-
-.filter-section {
-  margin-top: 25px;
-}
-
-.filter-section h4 {
-  margin-bottom: 15px;
-}
-
-.sidebar input[type="range"] {
-  width: 100%;
-}
-
+/* ── Categories ── */
 .brand-item {
-  display: block;
-  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 9px;
   cursor: pointer;
+  font-size: 13px;
+  color: #374151;
 }
 
 .brand-item input {
-  margin-right: 8px;
+  accent-color: #2563eb;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
 }
 
+/* ── Filter Sections ── */
+.filter-section {
+  margin-top: 18px;
+}
+
+.filter-section h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #111827;
+}
+
+/* ── Price Range Slider ── */
+.sidebar input[type="range"] {
+  width: 100%;
+  accent-color: #2563eb;
+  cursor: pointer;
+}
+
+.price-display {
+  font-size: 13px;
+  color: #2563eb;
+  font-weight: 600;
+  margin-top: 5px;
+  display: block;
+}
+
+/* ── Rating Filter ── */
+.rating-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 9px 0;
+  cursor: pointer;
+  font-size: 13px;
+  color: #374151;
+  transition: color 0.2s;
+}
+
+.rating-item input {
+  accent-color: #2563eb;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+.rating-item:hover {
+  color: #2563eb;
+}
+
+.active-rating {
+  font-weight: 700;
+  color: #2563eb;
+}
+
+/* ── Product Count ── */
+.product-count {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+  font-weight: 700;
+  font-size: 14px;
+  color: #111827;
+}
+
+/* ── Reset Button ── */
+.reset-btn {
+  width: 100%;
+  margin-top: 16px;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.reset-btn:hover {
+  background: #1d4ed8;
+}
+
+/* ── Stats & Active Filters Boxes ── */
+.stats-box,
+.active-filters {
+  margin-top: 14px;
+  padding: 10px 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.stats-box h4,
+.active-filters h4 {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 7px;
+  color: #111827;
+}
+
+.stats-box p,
+.active-filters p {
+  font-size: 12px;
+  margin: 4px 0;
+  color: #6b7280;
+}
+
+/* ── Responsive ── */
 @media (max-width: 768px) {
   .sidebar {
     width: 100%;
+    height: auto;
+    overflow-y: visible;
   }
 }

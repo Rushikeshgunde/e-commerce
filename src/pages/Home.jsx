@@ -11,34 +11,41 @@ function Home() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
   const [sortOrder, setSortOrder] = useState("");
-  const [cartCount, setCartCount] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000);
   const [selectedBrands, setSelectedBrands] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [rating, setRating] = useState(0);
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  const productsPerPage = 8;
+  const productsPerPage = 10; // 5 columns x 2 rows
 
   useEffect(() => {
     fetch("https://fakestoreapi.com/products")
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
       });
   }, []);
 
   useEffect(() => {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-    setCartCount(cart.length);
-  }, []);
+    setCurrentPage(1);
+  }, [search, category, maxPrice, selectedBrands, rating]);
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.title
       .toLowerCase()
       .includes(search.toLowerCase());
 
-    const matchesCategory = category === "all" || product.category === category;
+    const matchesRating = product.rating.rate >= rating;
+
+    const matchesCategory =
+      category === "all" || product.category === category;
 
     const matchesPrice = product.price <= maxPrice;
 
@@ -48,30 +55,30 @@ function Home() {
       matchesBrand = selectedBrands.some((brand) => {
         if (brand === "Electronics" && product.category === "electronics")
           return true;
-
         if (brand === "Jewelery" && product.category === "jewelery")
           return true;
-
         if (brand === "Men" && product.category === "men's clothing")
           return true;
-
         if (brand === "Women" && product.category === "women's clothing")
           return true;
-
         return false;
       });
     }
 
-    return matchesSearch && matchesCategory && matchesPrice && matchesBrand;
+    return (
+      matchesSearch &&
+      matchesCategory &&
+      matchesPrice &&
+      matchesBrand &&
+      matchesRating
+    );
   });
 
   const indexOfLastProduct = currentPage * productsPerPage;
-
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-
   const currentProducts = filteredProducts.slice(
     indexOfFirstProduct,
-    indexOfLastProduct,
+    indexOfLastProduct
   );
 
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
@@ -79,13 +86,22 @@ function Home() {
   if (sortOrder === "low-high") {
     currentProducts.sort((a, b) => a.price - b.price);
   }
-
   if (sortOrder === "high-low") {
     currentProducts.sort((a, b) => b.price - a.price);
   }
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="page-wrapper">
+        <Navbar />
+        <div className="spinner"></div>
+      </div>
+    );
+  }
+
   return (
-    <>
+    <div className="page-wrapper">
       <Navbar
         search={search}
         setsearch={setSearch}
@@ -93,7 +109,6 @@ function Home() {
         setCategory={setCategory}
         sortOrder={sortOrder}
         setsortOrder={setSortOrder}
-        cartCount={cartCount}
       />
 
       <div className="shop-layout">
@@ -102,18 +117,19 @@ function Home() {
           setMaxPrice={setMaxPrice}
           selectedBrands={selectedBrands}
           setSelectedBrands={setSelectedBrands}
+          rating={rating}
+          setRating={setRating}
+          totalProducts={products.length}
+          filteredCount={filteredProducts.length}
         />
 
         <div className="main-content">
-          <h1 className="page-title">All Products</h1>
-
           <div className="products-container">
             {currentProducts.length > 0 ? (
               currentProducts.map((item) => (
                 <ProductCard
                   key={item.id}
                   product={item}
-                  setCartCount={setCartCount}
                 />
               ))
             ) : (
@@ -137,8 +153,9 @@ function Home() {
           </div>
         </div>
       </div>
+
       <Footer />
-    </>
+    </div>
   );
 }
 
